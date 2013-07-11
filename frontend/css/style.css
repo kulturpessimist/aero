@@ -1,0 +1,11 @@
+.container{
+	margin-top: 60px;
+}
+.panel{ border: none; }
+
+.list-group{
+	position:fixed;
+	width: 270px;
+}
+.tweet .col-1 img{ width: 64px; height:64px; }
+iframe{ border:none; width:100%; }

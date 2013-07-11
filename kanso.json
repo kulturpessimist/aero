@@ -1,0 +1,23 @@
+{
+	"name": "aero-de-twitter",
+	"version": "0.0.1",
+	"description": "Personal twitter client",
+	"url": "http://www.æro.de/",
+	"attachments": ["frontend"],
+	"modules": ["db"],
+	"load": "db/design",
+	"git_info" : {
+		"skip_uncommitted" : true
+	},
+	"shell": [
+		
+	],
+	"dependencies": {
+		"attachments": null,
+		"modules": null,
+		"properties": null,
+		"git-info": null,
+
+		"multi-shell": null
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"compressed_suffix": ".min",
+	"compressor": "closure",
+	"bundle_dir": "js/",
+	"vendor_dir": "js/vendor",
+	"bundles": {
+		"libs": [
+			["jquery",						"2.0.3"],
+			["jquery.couch",				"1.2.1"],
+			["codebird-sha1",				"2.4.2"],
+			["codebird",					"2.4.2"],
+			["analytics.js",				"0.11.9"],
+			["moment",						"2.1.0"]
+		],
+		"angular": [
+			"js/angular/angular.min",
+			"js/angular/angular-resource",
+			"js/angular/angular-ui-utils.min"
+		]
+
+	}
+}
