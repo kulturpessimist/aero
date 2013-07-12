@@ -118,7 +118,7 @@ angular.module('aero.controllers', [])
 					$scope.$apply(function(){
 						console.log('tweets', reply);
 						reply.pop();
-						$scope.marker = reply[0].id;
+						$scope.marker.home = reply[0].id;
 						$scope.tweets = reply;
 					});
 				}
