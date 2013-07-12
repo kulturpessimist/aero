@@ -15,11 +15,12 @@ Controllers
 */
 
 angular.module('aero.controllers', [])
-	.controller('Stream', function($scope,twitter){
+	.controller('Stream', function($scope,twitter,marker){
 		$scope.twitter = twitter;
+		$scope.marker = { 'home':0 };
 		$scope.oauth_token = localStorage.getItem('oauth_token');
 		$scope.oauth_token_secret = localStorage.getItem('oauth_token_secret');
-
+		
 		$scope.pin = "";
 
 		$scope.user = {};
@@ -70,12 +71,17 @@ angular.module('aero.controllers', [])
 					$scope.$apply(function(){
 						console.log('verify credentials', reply);
 						$scope.user = reply;
-						// load all the stuff...
-						$scope.loadLists();
-						$scope.loadTweets();
-						$scope.reloadInterval = setInterval(function(){
+						// load tweetmarker
+						marker($scope.user.screen_name, function(id){
+							$scope.marker.home = id;
+							// all the stuff...
+							$scope.loadLists();
 							$scope.loadTweets();
-						}, 3*60*1000);
+							$scope.reloadInterval = setInterval(function(){
+								$scope.loadTweets();
+							}, 3*60*1000);
+
+						});
 					});
 				}
 			);
@@ -107,11 +113,29 @@ angular.module('aero.controllers', [])
 		$scope.loadTweets = function(){
 			$scope.twitter.__call(
 				"statuses_homeTimeline",
-				{ count:200 },
+				{ count:200, since_id: $scope.marker.home },
 				function (reply) {
 					$scope.$apply(function(){
 						console.log('tweets', reply);
 						reply.pop();
+						$scope.marker = reply[0].id;
+						$scope.tweets = reply;
+					});
+				}
+			);
+		}
+		$scope.loadListTweets = function(listId){
+			$scope.twitter.__call(
+				"lists_statuses",
+				{ count:200, since_id: $scope.marker[listId]||0 },
+				function (reply) {
+					$scope.$apply(function(){
+						console.log('list tweets',listId, reply);
+						reply.pop();
+						for(var i in reply){
+							reply[i].listId = listId;
+						}
+						$scope.marker[listId] = reply[0].id;
 						$scope.tweets = reply;
 					});
 				}
@@ -150,6 +174,21 @@ angular.module('aero.services', [])
 		cb.setConsumerKey("qXgECN9jqhaZgVoRmq7Y0A", "7DbWeQxH2gGJLaClQtw8eyAXm5VCApHnqwoIejZjU");
 		cb.setProxy("https://codebird-cors-proxy.eu01.aws.af.cm/");
 		return cb;
+	})
+	.factory('marker', function($http){
+		return function(username, onSuccess){
+			$http({
+				method: 'GET',
+				url: 'http://tweetmarker-cors-proxy.eu01.aws.af.cm/v2/lastread',
+				params:{
+					"api_key": "AE-E1868F0EAE44",
+					"username": username
+				}})
+				.success(function(data, status, headers, config){
+					console.log('tweetmarker',data);
+					onSuccess(data.timeline.id);
+				});
+		}
 	});
 	
 /*
