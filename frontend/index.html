@@ -21,7 +21,11 @@
 <body ng-controller="Stream">
 	
 	<div class="container">
+
+		<div class="loader"></div>
+
 		<div class="row">
+
 			<div class="col-3">
 				<ul class="list-group">
 					<!-- User -->
@@ -40,7 +44,7 @@
 					<a href="#/timeline" class="list-group-item active">
 						timeline <span class="badge pull-right">{{tweets.length}}</span>
 					</a>
-					<a ng-repeat="list in lists" ng-href="#/list/{{list.id}}" class="list-group-item">
+					<a ng-repeat="list in lists" ng-href="#/list/{{list.id}}" class="list-group-item" ng-click="loadListTweets(list.id)">
 						{{list.name}} <span class="badge pull-right">0</span>
 					</a>
 
@@ -54,7 +58,10 @@
 							<img class="img-rounded" ng-src="{{tweet.user.profile_image_url_https}}">
 						</div>
 						<div class="col-11">
-							<h6 class="">{{tweet.user.name}} <small>‏@{{tweet.user.screen_name}} </small><span class="label pull-right">{{tweet.created_at|ago}}</span></h6>
+							<h6 class="">
+								{{tweet.user.name}} <small>‏@{{tweet.user.screen_name}} </small>
+								<span class="label pull-right" ng-class="marked(tweet.id)">{{tweet.created_at|ago}}</span>
+							</h6>
 							<p>{{tweet.text}}</p>
 						</div>
 					</div>

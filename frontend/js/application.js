@@ -6,6 +6,12 @@ Application
 
 angular.module('aero', ['aero.controllers','aero.services','aero.directives','aero.filters','ui.event'])
 	.config(['$routeProvider', function($routeProvider) {
+		/*
+		$routeProvider.
+			when( '/phones', { templateUrl: 'partials/phone-list.html',   controller: PhoneListCtrl } ).
+			when( '/phones/:phoneId', {templateUrl: 'partials/phone-detail.html', controller: PhoneDetailCtrl}).
+			otherwise( { redirectTo: '/phones' } );
+		*/
 	}]);
 
 /*
@@ -22,6 +28,7 @@ angular.module('aero.controllers', [])
 		$scope.oauth_token_secret = localStorage.getItem('oauth_token_secret');
 		
 		$scope.pin = "";
+		$scope.active = 'home';
 
 		$scope.user = {};
 		$scope.lists = [];
@@ -77,10 +84,9 @@ angular.module('aero.controllers', [])
 							// all the stuff...
 							$scope.loadLists();
 							$scope.loadTweets();
-							$scope.reloadInterval = setInterval(function(){
+							/*$scope.reloadInterval = setInterval(function(){
 								$scope.loadTweets();
-							}, 3*60*1000);
-
+							}, 3*60*1000);*/
 						});
 					});
 				}
@@ -106,6 +112,9 @@ angular.module('aero.controllers', [])
 						console.log('lists', reply);
 						reply.pop();
 						$scope.lists = reply;
+						for(var i in $scope.lists){
+							$scope.marker[String($scope.lists[i].id)] = 1;
+						}
 					});
 				}
 			);
@@ -119,6 +128,7 @@ angular.module('aero.controllers', [])
 						console.log('tweets', reply);
 						reply.pop();
 						$scope.marker.home = reply[0].id;
+						$scope.active = 'home';
 						$scope.tweets = reply;
 					});
 				}
@@ -127,7 +137,7 @@ angular.module('aero.controllers', [])
 		$scope.loadListTweets = function(listId){
 			$scope.twitter.__call(
 				"lists_statuses",
-				{ count:200, since_id: $scope.marker[listId]||0 },
+				{ count:200, since_id: $scope.marker[String(listId)], list_id: listId },
 				function (reply) {
 					$scope.$apply(function(){
 						console.log('list tweets',listId, reply);
@@ -135,6 +145,7 @@ angular.module('aero.controllers', [])
 						for(var i in reply){
 							reply[i].listId = listId;
 						}
+						$scope.active = listId;
 						$scope.marker[listId] = reply[0].id;
 						$scope.tweets = reply;
 					});
@@ -142,6 +153,13 @@ angular.module('aero.controllers', [])
 			);
 		}
 		
+		$scope.marked = function(id){
+			if( $scope.marker[$scope.active] == id ){
+				return "label-info";
+			}else{
+				return "";
+			}
+		}
 		$scope.initialize();
 	});
 	
